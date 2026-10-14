@@ -1,234 +1,126 @@
-# 🚨 Responso — Disaster Relief Resource Optimizer
+# 🌍 Responso — Disaster Relief Resource Optimizer
 
-<div align="center">
+**An intelligent, offline-capable platform for optimizing disaster relief resource allocation during floods and other emergencies.**
 
-![OpenHack'26](https://img.shields.io/badge/OpenHack'26-Climate%20%26%20Disaster%20Resilience-bd00ff?style=for-the-badge&labelColor=0b0b0f)
-![Problem ID](https://img.shields.io/badge/Problem-CL--03-9dff00?style=for-the-badge&labelColor=0b0b0f)
-![Test Status](https://img.shields.io/badge/Tests-34%2F34%20Passing-00c853?style=for-the-badge&labelColor=0b0b0f)
-![Deployment](https://img.shields.io/badge/Frontend-Vercel%20Deployed-0070f3?style=for-the-badge&logo=vercel&logoColor=white&labelColor=0b0b0f)
-
-### Smart Relief. Faster Decisions. Better Coordination.
-
-**A full-stack disaster relief coordination and resource optimization system built to help humanitarian teams manage emergency requests, track supplies, and coordinate deliveries during natural disasters.**
-
-Designed around disaster scenarios such as floods in Sindh, Pakistan, Responso connects field assistance requests with available relief resources through transparent, constraint-aware allocation.
-
-**🌐 Online Mode | 📡 Offline Mode | 🧠 Smart Allocation | 🚚 Delivery Tracking**
-
-[🌐 Live Application](https://responso-disaster-relief-optimizer.vercel.app) · [📘 API Documentation](http://127.0.0.1:8000/docs) · [🩺 Backend Health Check](http://127.0.0.1:8000/health)
-
-**Developed by Team INNOHIVE**  
-Abdul Ahad · Devraj · Azhar
-
-</div>
+Responso helps disaster response teams identify urgent community needs, prioritize relief requests, and allocate limited resources more effectively. By combining urgency, population impact, waiting time, and geographical distance, the system supports data-driven relief planning when every minute matters.
 
 ---
 
-## 📑 Table of Contents
+## 🔗 Explore Responso Locally
 
-- [1. Overview](#-1-overview)
-- [2. Online and Offline Modes](#-2-online-and-offline-modes)
-- [3. Key Features](#-3-key-features)
-- [4. System Architecture](#-4-system-architecture)
-- [5. Technology Stack](#-5-technology-stack)
-- [6. Resource Allocation Algorithm](#-6-resource-allocation-algorithm)
-- [7. Offline Synchronization Engine](#-7-offline-synchronization-engine)
-- [8. Application URLs](#-8-application-urls)
-- [9. Project Structure](#-9-project-structure)
-- [10. Installation and Setup](#-10-installation-and-setup)
-- [11. Deployment](#-11-deployment)
-- [12. Demo Accounts](#-12-demo-accounts)
-- [13. Automated Testing](#-13-automated-testing)
-- [14. REST API Endpoints](#-14-rest-api-endpoints)
-- [15. OpenHack'26 Challenge Alignment](#-15-openhack26-challenge-alignment)
-- [16. Security and Data Integrity](#-16-security-and-data-integrity)
-- [17. Team INNOHIVE](#-17-team-innohive)
-
----
-
-## 🌍 1. Overview
-
-**Responso** is a disaster relief resource optimization platform designed to improve the coordination of emergency supplies during floods and other natural disasters.
-
-During emergencies, relief organizations must manage incoming assistance requests, monitor available supplies, identify urgent needs, and coordinate deliveries across multiple locations. Poor coordination can delay essential supplies from reaching affected communities.
-
-Responso addresses these challenges through a centralized platform that combines inventory management, geographical distance calculations, priority scoring, allocation recommendations, and delivery tracking.
-
-### 🎯 Our Mission
-
-To help humanitarian teams make **faster, more transparent, and better-informed resource allocation decisions**, even when internet connectivity is unreliable or unavailable.
-
-### 💡 How Responso Works
-
-1. **Register requests:** Record affected locations, urgency levels, population estimates, and required relief items.
-2. **Monitor resources:** Track available supplies across multiple relief depots.
-3. **Optimize allocation:** Calculate priority scores and evaluate suitable depots based on distance, stock, and delivery capacity.
-4. **Review recommendations:** Allow authorized coordinators to approve or reject proposed allocations.
-5. **Coordinate deliveries:** Track relief convoys from dispatch to final delivery.
-6. **Synchronize operations:** Preserve supported field actions offline and synchronize queued changes when connectivity returns.
-
----
-
-## 🔥 2. Online and Offline Modes
-
-One of Responso's key capabilities is its support for **both ONLINE and OFFLINE operating modes**. Disaster-affected areas may experience network congestion, power outages, or complete communication failures. The application is designed to remain useful in these conditions.
-
-### 🟢 ONLINE MODE — Connected Operations
-
-When an internet connection and the backend service are available, Responso can communicate with its REST API for connected operations.
-
-- Authenticate users and apply role-based permissions.
-- Retrieve assistance requests and inventory data from the backend.
-- Register and manage relief requests.
-- Generate resource allocation recommendations.
-- Approve allocations and manage stock movements.
-- Track delivery status and review audit records.
-- Synchronize queued offline operations with the server.
-
-**Best for:** Relief coordination centers, warehouses, logistics teams, and connected field operations.
-
-### 🟠 OFFLINE MODE — Continue Field Operations
-
-When connectivity is unavailable, Responso uses its Progressive Web App (PWA) capabilities and local storage to support configured offline workflows.
-
-- Load the cached application shell.
-- Access data already available in local storage.
-- Record supported operations locally.
-- Queue eligible changes for later synchronization.
-- Preserve queued operations using unique idempotency keys.
-- Retry synchronization when connectivity returns.
-- Review pending synchronization status.
-
-**Best for:** Flood-affected areas, remote communities, field teams, and locations with unstable internet connectivity.
-
-### 🔄 Automatic Synchronization
-
-When connectivity returns, the synchronization engine can replay eligible queued operations in first-in, first-out (FIFO) order. Idempotency keys help prevent the same operation from being applied more than once.
-
-```text
-       ONLINE MODE
-            |
-     Internet Available?
-        /          \
-      YES           NO
-       |             |
-   Server API    OFFLINE MODE
-       |             |
-   Process Data  Save Supported
-       |         Changes Locally
-       |             |
-       |        Queue Operations
-       |             |
-       +------ Internet Restored
-                     |
-               Sync Pending Queue
-                     |
-               Updated Server Data
-```
-
-> **Important:** Offline functionality depends on previously cached application assets, locally available data, and the specific actions implemented for offline use. Server-dependent features may require reconnection. Synchronization should not be interpreted as guaranteed conflict-free merging of every change.
-
----
-
-## ✨ 3. Key Features
-
-| Feature | Description |
+| Component | Local URL |
 |---|---|
-| 🚨 Emergency Request Management | Register and prioritize relief requests based on urgency and affected population. |
-| 📦 Multi-Depot Inventory | Track essential supplies across multiple relief warehouses. |
-| 🧠 Resource Optimization | Generate explainable allocation recommendations using priority scores and geographical distance. |
-| 🗺️ Location-Based Logistics | Use GPS coordinates and Haversine distance calculations to evaluate nearby depots. |
-| 🚚 Delivery & Convoy Tracking | Track deliveries through dispatch, transit, delivery, and failure states. |
-| 🔄 Online/Offline Operation | Support connected workflows and configured offline field operations. |
-| 🔁 Offline Synchronization | Queue eligible local changes and retry synchronization after reconnection. |
-| 🔐 Role-Based Access Control | Restrict sensitive operations according to user roles. |
-| 📋 Audit Logging | Record operational events for accountability and review. |
-| 🧪 Automated Testing | Validate allocation logic, authentication, persistence, and other implemented workflows. |
+| 🌐 Frontend Application | [http://localhost:3000](http://localhost:3000) |
+| ⚙️ Backend API | [http://127.0.0.1:8000/](http://127.0.0.1:8000/) |
+| 📚 API Documentation (Swagger) | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) |
+| ❤️ Backend Health Check | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) |
 
-### Essential Relief Resources
-
-The system manages five categories of emergency supplies:
-
-- 💧 Clean Water
-- 🍱 Emergency Food Packs
-- 🩹 First Aid Kits
-- ⛺ Shelter Tents
-- 🧼 Hygiene Packs
+> **Important:** Start the frontend and backend locally before opening these links. The links work on the computer running the services; they are not public internet links. If the frontend starts on a different port, use the URL printed in the terminal.
 
 ---
 
-## 🏗️ 4. System Architecture
+## 📌 Project Overview
 
-Responso follows a modular, multi-tier architecture that separates the frontend, API layer, allocation logic, and database operations.
-
-```text
-┌──────────────────────────────────────────────┐
-│            React Frontend / PWA              │
-│                                              │
-│  Dashboard • Requests • Inventory • Maps     │
-│  Deliveries • Audit • Local Storage          │
-└──────────────────────┬───────────────────────┘
-                       │
-             HTTP / JSON REST API
-                       │
-┌──────────────────────▼───────────────────────┐
-│              FastAPI Backend                 │
-│                                              │
-│  Authentication • Validation • API Routes    │
-│  Role-Based Access Control • Audit Events    │
-└─────────────┬─────────────────┬──────────────┘
-              │                 │
-┌─────────────▼────────┐ ┌──────▼──────────────┐
-│ Resource Allocation  │ │ Database Layer      │
-│                      │ │                     │
-│ Priority Scoring     │ │ SQLAlchemy ORM      │
-│ Distance Calculation │ │ SQLite / WAL        │
-│ Stock & Fleet Limits │ │ Relational Models   │
-└──────────────────────┘ └─────────────────────┘
-
-        Offline-First Support
-     ┌──────────────────────────┐
-     │ PWA Cache • Local Storage │
-     │ Operation Queue • Sync    │
-     └──────────────────────────┘
-```
-
-### Architecture Highlights
-
-- Modular API routes for individual system functions.
-- A dedicated allocation engine for relief distribution recommendations.
-- Transaction-aware inventory operations.
-- Local persistence and an offline synchronization queue.
-- A separate frontend and backend that communicate through REST APIs.
-
----
-
-## 🛠️ 5. Technology Stack
-
-| Layer | Technologies |
+| Detail | Description |
 |---|---|
-| Frontend | React 19, TypeScript, Vite |
-| UI & Styling | Tailwind CSS v4, Lucide React |
-| Mapping | Leaflet |
-| Offline Support | Progressive Web App, Service Worker, Local Storage |
-| Backend | Python, FastAPI, Uvicorn |
-| Validation | Pydantic v2 |
-| Database | SQLite 3, Write-Ahead Logging |
-| ORM | SQLAlchemy 2.0 |
-| Authentication | JWT, bcrypt |
-| Authorization | Role-Based Access Control |
-| Testing | Pytest, Node.js Test Runner, TSX |
-| Frontend Deployment | Vercel |
+| Project Name | Responso — Disaster Relief Resource Optimizer |
+| Event | OpenHack'26 |
+| Category | Category 4 — Climate & Disaster Resilience |
+| Problem ID | CL-03 |
+| Team Name | INNOHIVE |
+| Project Type | Full-stack disaster management platform |
+| Primary Goal | Improve the prioritization and allocation of disaster relief resources |
+
+### The Problem
+
+During floods and other emergencies, relief organizations often face challenges such as:
+
+- Multiple communities requesting assistance at the same time.
+- Limited food, clean water, medical supplies, and shelter resources.
+- Difficulty identifying which requests require immediate attention.
+- Delays in coordinating available resources with affected locations.
+- Poor connectivity in disaster-affected areas.
+- Limited visibility into resource availability and distribution.
+
+These challenges can delay assistance to the communities that need it most.
+
+### Our Solution
+
+Responso provides a centralized platform to help response teams manage relief requests, evaluate community needs, and prioritize resource allocation.
+
+The system combines urgency, population impact, waiting time, and distance to calculate a priority score for each request. It also aims to support essential workflows when internet connectivity is unavailable, subject to the offline capabilities implemented in the application.
+
+### Key Objectives
+
+- Prioritize critical relief requests.
+- Support more informed resource allocation.
+- Improve visibility into relief requests and available supplies.
+- Help response teams coordinate relief activities.
+- Support essential application workflows during connectivity interruptions.
+- Reduce delays caused by manual prioritization.
 
 ---
 
-## 🧠 6. Resource Allocation Algorithm
+## ✨ Key Features
 
-The allocation engine, implemented in `backend/app/allocation/engine.py`, generates explainable recommendations for distributing available relief resources.
+### 1. Intelligent Request Prioritization
 
-### 6.1 Priority Scoring
+The system calculates a priority score using multiple factors:
 
-Each unallocated assistance request receives a priority score:
+- **Urgency:** How serious the community's situation is.
+- **Population impact:** How many people may be affected.
+- **Waiting time:** How long the request has remained unresolved.
+- **Distance:** The geographical distance between relevant locations.
+
+### 2. Relief Resource Management
+
+The platform is designed to support the management and allocation of essential supplies, including:
+
+- Clean water
+- Emergency food packs
+- First aid kits
+- Shelter tents
+- Hygiene packs
+
+Actual allocation depends on available inventory, configured workflows, and the system's current data.
+
+### 3. Disaster Request Management
+
+Response teams can use the application to organize and review relief requests and determine which cases require attention first.
+
+### 4. Geographical Awareness
+
+Geographical distance can help response teams consider the proximity of affected communities and available resources when planning distribution.
+
+### 5. Online and Offline Support
+
+Responso is designed to support online operation and selected offline workflows.
+
+- **Online mode:** Communicates with the backend when connectivity is available.
+- **Offline mode:** Can use configured application caching and local storage for supported operations.
+- **Synchronization:** Queued changes may be synchronized after connectivity returns, where the relevant synchronization workflow has been implemented.
+
+Offline functionality depends on the specific features configured in the application. It should not be assumed that every API operation or feature works without a network connection.
+
+### 6. Backend API
+
+The backend provides endpoints for application functionality and exposes interactive API documentation through Swagger.
+
+### 7. Data Management
+
+The backend uses a database to manage application data. SQLite and its write-ahead logging configuration are part of the documented technology stack.
+
+### 8. Access Control
+
+Authentication and role-based access control are included in the documented backend design. Available permissions depend on the configured application roles and endpoints.
+
+---
+
+## 🧮 Resource Prioritization Algorithm
+
+Responso uses a weighted scoring approach to rank relief requests.
+
+### Priority Formula
 
 \[
 S_i = 0.50U_i + 0.35P_i + 0.15W_i
@@ -236,445 +128,502 @@ S_i = 0.50U_i + 0.35P_i + 0.15W_i
 
 Where:
 
-- **Urgency (\(U_i\)):** Critical = 1.00, High = 0.75, Moderate = 0.50, Low = 0.25.
-- **Population (\(P_i\)):** A normalized score based on the affected population, capped at 1.00.
-- **Waiting Time (\(W_i\)):** Waiting hours normalized over a maximum of 72 hours.
+- \(S_i\) = priority score for request \(i\)
+- \(U_i\) = normalized urgency value
+- \(P_i\) = normalized population impact
+- \(W_i\) = normalized waiting time
 
-The default weights emphasize urgency while also considering the number of affected people and how long they have been waiting.
+The weights assign 50% importance to urgency, 35% to population impact, and 15% to waiting time.
 
-### 6.2 Geographical Distance
+### Urgency Values
 
-Responso uses the Haversine formula to estimate the great-circle distance between a relief depot and an affected location.
+| Urgency Level | Normalized Value |
+|---|---:|
+| Critical | 1.00 |
+| High | 0.75 |
+| Moderate | 0.50 |
+| Low | 0.25 |
+
+### Normalization
+
+The documented normalization approach uses the following reference values:
+
+- **Population:** 10,000 people
+- **Waiting time:** 72 hours
+
+A normalized factor should be bounded to its intended range if the implementation is designed to produce scores between 0 and 1.
+
+For example:
 
 \[
-\begin{aligned}
-a={}&\sin^2\left(\frac{\Delta\phi}{2}\right)\\
-&+\cos(\phi_1)\cos(\phi_2)
-\sin^2\left(\frac{\Delta\lambda}{2}\right)
-\end{aligned}
+P_i = \min\left(\frac{\text{Affected Population}}{10000},1\right)
 \]
 
 \[
-d=2R\arcsin(\sqrt{a})
+W_i = \min\left(\frac{\text{Waiting Hours}}{72},1\right)
 \]
 
-Where \(R=6{,}371\) km is the approximate radius of Earth.
+These equations describe the intended normalization approach; the actual implementation should be checked to confirm the same behavior.
 
-### 6.3 Allocation Constraints
+### Distance Calculation
 
-The allocation engine considers:
+The system uses the Haversine formula to estimate the great-circle distance between two geographical coordinates on Earth.
 
-1. Request priority scores.
-2. Distance to available relief depots.
-3. Available stock for each required item.
-4. Depot weight capacity.
-5. Available delivery vehicles.
-6. Remaining demand after allocations.
+This helps the system consider geographical proximity when planning relief distribution.
 
-### 6.4 Human Approval
+**Important:** Distance is a separate geographical factor in the documented design. It is not included in the displayed weighted priority formula unless the implementation explicitly adds it.
 
-The system separates recommendation generation from allocation approval.
+### How Prioritization Works
+
+1. Receive or retrieve relief requests.
+2. Evaluate each request's urgency.
+3. Normalize population impact and waiting time.
+4. Calculate the weighted priority score.
+5. Rank requests according to their scores.
+6. Consider geographical distance and resource availability when planning distribution.
+
+The ranking supports decision-making; it does not replace emergency personnel or on-ground assessments.
+
+---
+
+## 🏗️ System Architecture
+
+Responso follows a frontend-and-backend architecture.
 
 ```text
-Assistance Requests
-        ↓
-Priority & Distance Evaluation
-        ↓
-Draft Allocation Run
-        ↓
-Coordinator Review
-        ↓
-Approve or Reject
-        ↓
-Inventory & Delivery Updates
+                    ┌─────────────────────────┐
+                    │       User / Team       │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │    React Frontend        │
+                    │ TypeScript + Tailwind    │
+                    │ Maps + Offline Support   │
+                    └────────────┬────────────┘
+                                 │
+                         HTTP API Requests
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │     FastAPI Backend      │
+                    │ Authentication + Logic   │
+                    │ Request Prioritization   │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │       SQLite DB          │
+                    │ Application Data         │
+                    └─────────────────────────┘
 ```
 
-Inventory changes are made through the configured approval workflow rather than simply because an optimization run has been generated.
+The frontend provides the user interface, while the backend handles API requests and server-side processing. The database stores application data.
 
 ---
 
-## 📡 7. Offline Synchronization Engine
+## 🛠️ Technology Stack
 
-The offline synchronization system is designed to maintain supported field operations when a connection to the backend is unavailable.
+### Frontend
 
-### Main Components
+| Technology | Purpose |
+|---|---|
+| React 19 | User interface |
+| TypeScript | Type-safe application development |
+| Vite | Development server and build tooling |
+| Tailwind CSS v4 | Styling and responsive layouts |
+| Leaflet | Interactive maps |
+| Progressive Web App (PWA) support | Application caching and selected offline workflows |
+| Local Storage | Local client-side data where implemented |
 
-**Service Worker — `public/sw.js`**
+### Backend
 
-Caches configured application resources and provides an application-shell fallback when offline.
+| Technology | Purpose |
+|---|---|
+| Python | Backend programming language |
+| FastAPI | REST API framework |
+| Uvicorn | ASGI application server |
+| Pydantic v2 | Data validation |
+| SQLite | Relational database |
+| SQLite WAL | Database write-ahead logging |
+| SQLAlchemy 2.0 | Database interaction |
+| JWT | Token-based authentication |
+| bcrypt | Password hashing |
+| Role-Based Access Control (RBAC) | Permission management |
 
-**Local Storage — `src/services/storage.ts`**
+### Testing and Development
 
-Maintains locally stored application data and handles configured storage migrations and quota protection.
+- `pytest` for Python backend tests.
+- Node.js test runner and `tsx` for configured TypeScript tests.
+- Git and GitHub for version control and collaboration.
+- Visual Studio Code as a development environment.
 
-**Synchronization Queue — `src/services/offlineSync.ts`**
-
-Queues eligible operations, including supported request creation, delivery status updates, and stock movement records.
-
-**API Client — `src/services/api.ts`**
-
-Connects frontend services to the backend and supports the application's configured offline fallback behavior.
-
-### Synchronization Flow
-
-1. A supported operation is initiated while offline.
-2. The operation is recorded in local application state.
-3. A pending operation is added to the synchronization queue.
-4. The operation receives a unique UUID-based idempotency key.
-5. Connectivity monitoring detects when synchronization can resume.
-6. The queue retries eligible operations in FIFO order.
-7. The frontend updates the synchronization status using the response.
-
-The synchronization queue is intended to reduce duplicate submissions and help preserve field updates during connectivity interruptions. Final consistency still depends on server validation and conflict-handling behavior.
-
----
-
-## 🔗 8. Application URLs
-
-| Service | URL | Purpose |
-|---|---|---|
-| Live Frontend | [Open Responso](https://responso-disaster-relief-optimizer.vercel.app) | Deployed frontend |
-| Local Frontend | `http://localhost:3000` | Local development interface |
-| Local Backend | `http://127.0.0.1:8000` | FastAPI backend |
-| Swagger API Docs | `http://127.0.0.1:8000/docs` | Interactive API documentation |
-| Health Check | `http://127.0.0.1:8000/health` | Backend health endpoint |
-
-**Note:** The local URLs work only when the corresponding services are running on your computer. The deployed frontend does not automatically make a locally running backend accessible to external users.
+The stack above reflects the project's documented technologies. Exact package versions and feature availability should be verified against the current source code and dependency files.
 
 ---
 
-## 📁 9. Project Structure
+## 📂 Project Structure
+
+The repository contains the backend, frontend application, and system documentation.
 
 ```text
 Responso/
-├── README.md
-├── .gitignore
-├── .npmrc
 │
 ├── backend/
 │   ├── app/
-│   │   ├── api/
-│   │   │   ├── routes/
-│   │   │   │   ├── allocation.py
-│   │   │   │   ├── audit.py
-│   │   │   │   ├── auth.py
-│   │   │   │   ├── dashboard.py
-│   │   │   │   ├── deliveries.py
-│   │   │   │   ├── inventory.py
-│   │   │   │   ├── locations.py
-│   │   │   │   ├── requests.py
-│   │   │   │   ├── users.py
-│   │   │   │   └── warehouses.py
-│   │   │   └── deps.py
-│   │   ├── allocation/
-│   │   │   └── engine.py
-│   │   ├── core/
-│   │   │   ├── config.py
-│   │   │   ├── database.py
-│   │   │   └── security.py
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   ├── seeds/
-│   │   └── main.py
+│   │   ├── main.py
+│   │   └── seeds/
+│   │       └── seed_data.py
 │   ├── tests/
-│   ├── requirements.txt
-│   └── .env.example
+│   └── requirements.txt
 │
 ├── responso-_-disaster-relief-resource-optimizer/
-│   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   ├── data/
-│   │   ├── services/
-│   │   │   ├── api.ts
-│   │   │   ├── offlineSync.ts
-│   │   │   ├── optimizer.ts
-│   │   │   └── storage.ts
-│   │   ├── views/
-│   │   ├── App.tsx
-│   │   └── types.ts
+│   ├── public/
 │   ├── package.json
-│   ├── vite.config.ts
-│   └── vercel.json
+│   └── ...
 │
-└── ReliefRoute_System_Documentation/
+├── ReliefRoute_System_Documentation/
+│
+└── README.md
 ```
 
-*This is a representative structure. Ensure directory and file names match the current repository.*
+> The structure is illustrative. Some files and subdirectories may differ in your current repository. Keep the README aligned with the actual files in GitHub.
 
 ---
 
-## 🚀 10. Installation and Setup
+## 🚀 Getting Started
+
+Follow these steps to run Responso on your local computer.
 
 ### Prerequisites
 
-- Python 3.10 or later, with Python 3.13 used in the described environment.
-- Node.js 18 or later.
-- npm.
-- Git (recommended).
+Install the following:
 
-### Step 1 — Clone the Repository
+- Python 3.10 or a compatible version supported by the backend dependencies.
+- Node.js and npm.
+- Git.
+- Visual Studio Code or another code editor.
+
+Confirm that Python and Node.js are available:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd Responso
+python --version
+node --version
+npm --version
 ```
 
-Replace the placeholder with your actual GitHub repository URL.
+### Step 1: Clone the Repository
 
-### Step 2 — Configure the Backend
+If you have not already cloned the project, run:
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd YOUR_REPOSITORY_FOLDER
+```
+
+Replace the placeholders with your actual GitHub repository URL and folder name.
+
+If you already have the repository on your computer, open that folder in your terminal instead.
+
+### Step 2: Set Up the Backend
+
+Open a terminal in the project root:
 
 ```bash
 cd backend
+```
+
+Create a virtual environment:
+
+```bash
 python -m venv venv
 ```
 
-Activate the virtual environment.
-
-**Windows PowerShell:**
+Activate it on Windows PowerShell:
 
 ```powershell
 .\venv\Scripts\Activate.ps1
 ```
 
-**Linux/macOS:**
+If PowerShell blocks script execution, use Command Prompt instead:
+
+```bat
+venv\Scripts\activate.bat
+```
+
+On Linux or macOS:
 
 ```bash
 source venv/bin/activate
 ```
 
-Install dependencies:
+Install the backend dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Configure environment variables using `.env.example` as a reference. Set a secure application secret and the appropriate database settings before running the application.
+### Step 3: Initialize Sample Data (If Required)
 
-If the project requires initial seed data, run:
+If the application requires seeded sample data, run:
 
 ```bash
 python -m app.seeds.seed_data
 ```
 
-Start the backend:
+Run this only if the seed script exists and is appropriate for your current database setup. Check the script before executing it against any database containing important data.
+
+### Step 4: Start the Backend Server
+
+From the `backend` directory, run:
 
 ```bash
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Backend API: `http://127.0.0.1:8000`
+The backend should now be available at:
 
-Interactive documentation: `http://127.0.0.1:8000/docs`
+- **Backend API:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **Swagger Documentation:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Health Check:** [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
-### Step 3 — Configure the Frontend
+The health-check URL works only if the backend defines that endpoint. If any URL returns a 404, check the routes implemented in `app/main.py` and the related router files.
 
-Open a second terminal from the project root:
+Keep this terminal running.
+
+### Step 5: Set Up the Frontend
+
+Open a **second terminal** in the project root.
+
+Navigate to the frontend directory:
 
 ```bash
 cd responso-_-disaster-relief-resource-optimizer
+```
+
+Install the frontend dependencies:
+
+```bash
 npm install
+```
+
+### Step 6: Start the Frontend
+
+Run:
+
+```bash
 npm run dev
 ```
 
-Open the local address printed by Vite. If the Vite configuration specifies port 3000, use:
+Vite will display the local development URL in the terminal.
 
-`http://localhost:3000`
+If the project is configured to use port `3000`, open:
 
-### Step 4 — Verify the Application
+**[http://localhost:3000](http://localhost:3000)**
 
-- Confirm the backend health endpoint responds.
-- Open the frontend and test login.
-- Check the requests and inventory views.
-- Generate a draft allocation run.
-- Test the supported offline workflows with network connectivity disabled.
-- Re-enable connectivity and verify the synchronization queue.
+If Vite displays a different port, use the URL shown in your terminal.
 
----
+### Step 7: Explore the Application
 
-## ☁️ 11. Deployment
+Once both services are running, open the frontend and explore the available features.
 
-The frontend is configured for deployment on [Vercel](https://vercel.com).
-
-### Frontend Deployment Checklist
-
-1. Import the repository into Vercel.
-2. Set the root directory to `responso-_-disaster-relief-resource-optimizer`.
-3. Select the Vite framework preset.
-4. Use `npm run build` as the build command.
-5. Use `dist` as the output directory.
-6. Configure environment variables required by the frontend.
-7. Configure the frontend API base URL to point to a reachable, deployed backend.
-8. Verify that SPA routing and production API requests work.
-
-### Backend Deployment Considerations
-
-The backend requires a reachable hosting environment, suitable persistent database storage, secure environment variables, and appropriate CORS configuration.
-
-**Important:** A frontend deployment on Vercel does not, by itself, deploy the FastAPI backend. Localhost API URLs are accessible only from the machine running the backend, so they must not be used as public production API addresses.
-
----
-
-## 🔐 12. Demo Accounts
-
-The development environment is described as containing seeded accounts for different operational roles.
-
-| Role | Intended Permissions |
+| What to Explore | Link |
 |---|---|
-| Logistics Coordinator | Review allocations, manage requests, coordinate deliveries |
-| Operations Coordinator | Coordinate operational workflows |
-| Field Dispatcher | Update delivery and convoy status |
-| Inventory Manager | Manage stock records and movements |
-| System Administrator | Manage users, permissions, and audit records |
+| Frontend | [http://localhost:3000](http://localhost:3000) |
+| Backend API | [http://127.0.0.1:8000/](http://127.0.0.1:8000/) |
+| Interactive API Docs | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) |
+| Backend Health | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) |
 
-For security, demo credentials should be documented only in a controlled development environment. Do not publish real passwords, production credentials, signing secrets, or private configuration values in a public repository.
+These addresses assume the services are running on their configured ports. The root API endpoint may return a simple response or a 404 if no root route is defined; Swagger is the recommended starting point for exploring the available API endpoints.
 
 ---
 
-## 🧪 13. Automated Testing
+## 🧪 Testing
 
-The project documentation reports **34 automated tests, with all 34 passing**.
+Responso includes backend and frontend tests in its documented testing setup.
 
-| Test Suite | Reported Tests | Main Coverage |
-|---|---:|---|
-| Allocation Engine | 7 | Priority scoring, distance calculations, allocation logic |
-| API Allocation Flow | 6 | Drafts, inventory operations, approval workflow |
-| Authentication & Requests | 9 | Authentication, authorization, validation |
-| Enhanced Features | 6 | Multi-depot allocation, idempotency, failure recovery |
-| Persistence | 1 | Data persistence across restarts |
-| Frontend Tests | 5 | Session handling, offline queue, retry logic |
+### Backend Tests
 
-### Run Backend Tests
-
-From the repository root:
+Activate the backend virtual environment, navigate to the `backend` directory, and run:
 
 ```bash
-python -m pytest backend/tests/ -v
+pytest
 ```
 
-### Run Frontend Tests
+### Frontend Tests
+
+Navigate to the frontend directory and inspect the available scripts:
 
 ```bash
-cd responso-_-disaster-relief-resource-optimizer
+npm run
+```
+
+Run the test script defined in `package.json`. For example, if a `test` script exists:
+
+```bash
 npm test
 ```
 
-Run these commands against the current codebase to confirm the reported test count and results.
+### Test Results
+
+The project has previously been reported as having **34 passing tests**:
+
+| Test Suite | Previously Reported |
+|---|---:|
+| Backend | 29 tests |
+| Frontend | 5 tests |
+| **Total** | **34 tests** |
+
+These are previously reported results, not a guarantee that every test currently passes. Run the commands above to verify the current repository state before presenting these numbers as confirmed results.
 
 ---
 
-## 🔌 14. REST API Endpoints
+## 🔐 Security Considerations
 
-The backend exposes REST endpoints for authentication, request management, inventory, allocation, deliveries, users, and audit events.
+Security is important in disaster response systems because they may handle sensitive operational information.
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/health` | Health check |
-| `POST` | `/api/v1/auth/login` | Authenticate and issue a token |
-| `GET` | `/api/v1/auth/me` | Retrieve the current user |
-| `POST` | `/api/v1/auth/logout` | Handle logout |
-| `GET` | `/api/v1/dashboard/summary` | Retrieve dashboard metrics |
-| `POST` | `/api/v1/dashboard/reset-demo` | Reset seeded demo data |
-| `GET` | `/api/v1/requests/` | List assistance requests |
-| `POST` | `/api/v1/requests/` | Create an assistance request |
-| `GET` | `/api/v1/requests/{id}` | Retrieve request details |
-| `PATCH` | `/api/v1/requests/{id}` | Update a request |
-| `GET` | `/api/v1/warehouses/` | List depots |
-| `GET` | `/api/v1/warehouses/{id}/inventory` | Retrieve depot inventory |
-| `GET` | `/api/v1/inventory/` | Retrieve inventory across depots |
-| `POST` | `/api/v1/inventory/movements` | Record stock movements |
-| `GET` | `/api/v1/allocation-runs/` | List allocation runs |
-| `POST` | `/api/v1/allocation-runs/` | Generate a draft allocation |
-| `GET` | `/api/v1/allocation-runs/{id}` | Inspect allocation details |
-| `POST` | `/api/v1/allocation-runs/{id}/approve` | Approve an allocation |
-| `POST` | `/api/v1/allocation-runs/{id}/reject` | Reject an allocation |
-| `GET` | `/api/v1/deliveries/` | List deliveries |
-| `POST` | `/api/v1/deliveries/{id}/assign` | Assign a vehicle and driver |
-| `PATCH` | `/api/v1/deliveries/{id}/status` | Update delivery status |
-| `GET` | `/api/v1/users/` | List users |
-| `PATCH` | `/api/v1/users/{id}` | Update permitted user fields |
-| `GET` | `/api/v1/audit/events` | Inspect audit events |
+The documented backend stack includes JWT authentication, bcrypt password hashing, and role-based access control.
 
-Actual endpoint availability and authorization requirements should be confirmed against the running backend's OpenAPI documentation.
+Recommended practices include:
+
+- Store secrets and signing keys in environment variables.
+- Never commit real passwords, tokens, or private keys to GitHub.
+- Use strong, unique credentials for administrator accounts.
+- Enforce permissions on protected backend endpoints.
+- Validate user input on the server.
+- Use HTTPS and suitable production security settings when deploying publicly.
+- Restrict database and administrative access.
+- Review offline data storage before storing sensitive information on devices.
+
+Local development settings should not automatically be treated as production-ready security settings.
 
 ---
 
-## 🏆 15. OpenHack'26 Challenge Alignment
+## 🌐 Online and Offline Operation
 
-**Challenge:** CL-03 — Disaster Relief Resource Optimizer  
-**Category:** Climate & Disaster Resilience  
-**Event:** OpenHack'26, Department of Software Engineering, MUET SZAB Campus, Khairpur
+Disaster-affected locations may experience unstable internet connectivity. Responso is designed to support selected workflows under these conditions.
 
-Responso addresses the challenge through the following capabilities:
+### Online Operation
 
-| Challenge Need | Responso Approach |
+When the network is available, the frontend can communicate with the backend to perform supported API operations.
+
+### Offline Operation
+
+Depending on the implemented configuration, the frontend may use:
+
+- A cached application shell.
+- Local storage for selected data.
+- Queued operations for supported actions.
+- Synchronization after the connection returns.
+
+### Important Limitations
+
+- The backend cannot be reached through `127.0.0.1` from another device as though it were a public server.
+- Browser caching alone does not make every application feature work offline.
+- Offline writes need a defined queue and conflict-handling strategy.
+- Data synchronization should account for duplicate requests and failed operations.
+- The actual offline behavior must be tested by disconnecting the network and verifying each supported workflow.
+
+---
+
+## 🎯 Alignment With the Challenge
+
+**Problem ID: CL-03 — Disaster Relief Resource Optimizer**
+
+Responso addresses the challenge of coordinating relief resources during floods and other emergencies.
+
+| Challenge | Responso's Approach |
 |---|---|
-| Demand and Supply Coordination | Connect assistance requests with depot inventory. |
-| Emergency Prioritization | Calculate request scores using urgency, affected population, and waiting time. |
-| Geographical Logistics | Estimate depot-to-request distances using the Haversine formula. |
-| Resource Constraints | Consider available supplies, weight capacity, and delivery fleet availability. |
-| Controlled Allocation | Require coordinator approval before committing allocation changes. |
-| Delivery Visibility | Track convoy progress through defined delivery states. |
-| Connectivity Resilience | Support configured offline workflows and queued synchronization. |
-| Accountability | Maintain operational audit records and role-based access controls. |
+| Multiple urgent requests | Weighted request prioritization |
+| Limited relief supplies | Resource and allocation management |
+| Large affected populations | Population-impact scoring |
+| Delayed assistance | Waiting-time scoring |
+| Geographical constraints | Distance calculation |
+| Unstable connectivity | Selected offline-capable workflows |
+| Need for operational visibility | Centralized application interface |
 
-### Expected Impact
-
-Responso aims to help relief teams:
-
-- Identify urgent assistance needs more systematically.
-- Improve visibility into available supplies.
-- Reduce avoidable delays in resource allocation.
-- Coordinate relief deliveries across multiple depots.
-- Maintain supported field workflows during network interruptions.
-- Improve transparency in operational decision-making.
+The platform is intended to help response teams make more informed allocation decisions. Real-world outcomes would require validation with representative disaster-response data and operational testing.
 
 ---
 
-## 🛡️ 16. Security and Data Integrity
+## 👥 Team INNOHIVE
 
-Responso incorporates security and integrity controls intended for a role-based operational system.
+The project was developed by Team INNOHIVE for OpenHack'26.
 
-- **Authentication:** JWT-based authentication.
-- **Password Protection:** bcrypt password hashing.
-- **Authorization:** Role-based permissions for protected operations.
-- **Data Validation:** Pydantic schemas for request and response validation.
-- **Database Integrity:** SQLAlchemy ORM and relational constraints.
-- **Transactional Operations:** Database transactions for configured allocation workflows.
-- **Idempotency:** Unique operation keys for supported retry-safe operations.
-- **Auditability:** Records of operational events and changes.
-- **Environment Configuration:** Secrets and environment-specific settings managed outside source code.
-
-Security depends on correct deployment configuration, protected credentials, appropriate token handling, and verification of the actual implementation.
-
----
-
-## 👥 17. Team INNOHIVE
-
-**Team INNOHIVE** developed Responso for the OpenHack'26 disaster resilience challenge.
-
-| Team Member | Name |
+| Team Member | Role |
 |---|---|
-| Member 1 | **Abdul Ahad** |
-| Member 2 | **Devraj** |
-| Member 3 | **Azhar** |
+| Abdul Ahad | Team Member |
+| Devraj | Team Member |
+| Azhar | Team Member |
 
-### Our Approach
-
-As Team INNOHIVE, we focused on a practical disaster relief coordination problem: helping humanitarian teams organize requests, manage relief inventory, and make resource allocation decisions when time and connectivity are critical.
-
-By combining a full-stack web application, explainable allocation logic, and offline-first capabilities, Responso demonstrates an approach to making disaster response operations more organized and resilient.
+*Update these roles to reflect each member's actual contribution before final submission.*
 
 ---
 
-<div align="center">
+## 🔮 Future Improvements
 
-### 🚨 Responso — Relief Coordination Without Connectivity as a Single Point of Failure
+Potential areas for future development include:
 
-**Built with purpose by Team INNOHIVE**
+- Integrating verified live disaster and weather data.
+- Improving the resource allocation algorithm with operational constraints.
+- Adding more detailed inventory and distribution tracking.
+- Improving offline queue reliability and conflict resolution.
+- Adding notifications for critical requests.
+- Improving map-based relief coordination.
+- Providing analytical dashboards for response teams.
+- Evaluating prioritization results using historical or simulated disaster scenarios.
+- Adding audit logs for important resource allocation decisions.
+- Conducting usability and performance testing with relief personnel.
 
-🌐 Online Operations · 📡 Offline Resilience · 🧠 Smart Allocation · 🚚 Coordinated Relief
+These are proposed improvements and should not be interpreted as already implemented features.
 
-[Launch Responso](https://responso-disaster-relief-optimizer.vercel.app)
+---
 
-</div>
+## 🤝 Contributing
+
+Contributions and suggestions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make focused changes.
+4. Run the relevant tests.
+5. Commit your changes with a clear message.
+6. Open a pull request describing the changes.
+
+Example:
+
+```bash
+git checkout -b feature/your-feature
+git add .
+git commit -m "Add your feature"
+git push origin feature/your-feature
+```
+
+---
+
+## 📄 Documentation
+
+The repository includes a `ReliefRoute_System_Documentation/` directory for system-related documentation.
+
+Refer to the documentation and source code for implementation details, configuration requirements, API routes, and supported workflows.
+
+---
+
+## ⚠️ Disclaimer
+
+Responso is a disaster-relief resource optimization project developed for a hackathon challenge. It is intended to support decision-making, not replace emergency authorities, professional responders, or field assessments.
+
+Before real-world use, the system would require security review, operational validation, data-quality checks, and testing under realistic disaster-response conditions.
+
+---
+
+## 📜 License
+
+No license has been specified here. Add a suitable `LICENSE` file and update this section if you intend to distribute the project under an open-source license.
+
+---
+
+**Built by Team INNOHIVE for OpenHack'26.**
+
+*Responso — Prioritizing needs. Coordinating resources. Supporting faster relief.*
