@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16
+    container_name: reliefroute-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reliefroute
+      POSTGRES_USER: reliefroute
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-only}
+    ports:
+      - "5432:5432"
+    volumes:
+      - reliefroute_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reliefroute -d reliefroute"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  reliefroute_pgdata:

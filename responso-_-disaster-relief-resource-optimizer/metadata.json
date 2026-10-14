@@ -1,0 +1,6 @@
+{
+  "name": "RESPONSO | Disaster Relief Resource Optimizer",
+  "description": "Coordination platform matching emergency relief requests with inventory and optimizing logistics allocation across affected communities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

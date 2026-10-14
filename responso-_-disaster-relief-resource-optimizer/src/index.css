@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-doodle: 'Kalam', cursive, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: #FAF7F2;
+    color: #1E232A;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.font-doodle {
+  font-family: 'Kalam', cursive, sans-serif;
+}
+
+.font-mono-nums {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Doodle hand-drawn paper aesthetic */
+.doodle-paper {
+  background-color: #FAF7F2;
+  background-image: radial-gradient(#E5DECF 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.doodle-card {
+  border: 2px solid #1E232A;
+  box-shadow: 3px 3px 0px #1E232A;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+}
+
+.doodle-card-sm {
+  border: 1.5px solid #1E232A;
+  box-shadow: 2px 2px 0px #1E232A;
+  border-radius: 6px;
+}
+
+.doodle-button {
+  border: 2px solid #1E232A;
+  box-shadow: 2px 2px 0px #1E232A;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.doodle-button:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #1E232A;
+}
+
+.doodle-button:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px #1E232A;
+}
+
+.doodle-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Sketch border animation for optimization progress */
+@keyframes sketch-dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.animate-dash {
+  stroke-dasharray: 6 4;
+  animation: sketch-dash 1.8s linear infinite;
+}
