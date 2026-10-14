@@ -321,7 +321,6 @@ All API endpoints follow RESTful conventions, produce structured JSON, support i
 | `PATCH` | `/api/v1/users/{id}` | Update user (Self-update safe fields; Admin only for role/active) | Self / Admin |
 | `GET` | `/api/v1/audit/events` | Inspect immutable audit event log | Admin |
 
----
 
 ## 10. Security & Error Handling
 
@@ -332,7 +331,6 @@ All API endpoints follow RESTful conventions, produce structured JSON, support i
 - **Race Condition Prevention**: Allocation approvals employ atomic database transactions (`session.commit()` with row locking) to prevent double-spending inventory.
 - **CORS & Environment Isolation**: Configured CORS middleware with allowed origins; all environment secrets managed via `.env`.
 
----
 
 ## 11. Troubleshooting
 
