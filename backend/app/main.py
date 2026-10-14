@@ -105,3 +105,49 @@ app.include_router(allocation.router, prefix=PREFIX + "/allocation-runs", tags=[
 app.include_router(deliveries.router, prefix=PREFIX + "/deliveries", tags=["Deliveries"])
 app.include_router(dashboard.router, prefix=PREFIX + "/dashboard", tags=["Dashboard"])
 app.include_router(audit.router, prefix=PREFIX + "/audit-events", tags=["Audit"])
+
+
+# ─── Static Frontend Serving (Single-Service Deployment) ──────────────────────
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, RedirectResponse
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+# Redirect /docs to /api/docs for convenience
+@app.get("/docs", include_in_schema=False)
+async def redirect_docs():
+    return RedirectResponse(url="/api/docs")
+
+if STATIC_DIR.exists() and (STATIC_DIR / "index.html").exists():
+    logger.info(f"Frontend static files located at {STATIC_DIR}; mounting static routes.")
+
+    # Mount compiled static assets (/assets -> static/assets)
+    assets_dir = STATIC_DIR / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="static_assets")
+
+    # Serve index.html on root "/"
+    @app.get("/", include_in_schema=False)
+    async def serve_root_index():
+        return FileResponse(STATIC_DIR / "index.html")
+
+    # SPA catch-all route: serves index.html for frontend client routing, or specific static files
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa_fallback(full_path: str):
+        # Do not catch API or documentation routes
+        if full_path.startswith(("api/", "api", "health", "docs", "redoc", "openapi.json")):
+            raise StarletteHTTPException(status_code=404, detail="API route not found")
+
+        # Check if an exact static file exists (e.g. manifest.json, sw.js, favicon.ico)
+        candidate_file = STATIC_DIR / full_path
+        if candidate_file.is_file():
+            return FileResponse(candidate_file)
+
+        # Fallback to index.html so React client-side router handles the URL
+        index_file = STATIC_DIR / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+
+        raise StarletteHTTPException(status_code=404, detail="Page not found")
+
