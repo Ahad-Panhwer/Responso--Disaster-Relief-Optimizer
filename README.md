@@ -1,377 +1,680 @@
-# Responso — Disaster Relief Resource Optimizer
+# 🚨 Responso — Disaster Relief Resource Optimizer
 
 <div align="center">
 
-![OpenHack26](https://img.shields.io/badge/OpenHack'26-Category_4:_Climate_%26_Disaster_Resilience-bd00ff?style=for-the-badge&labelColor=0b0b0f)
-![Problem ID](https://img.shields.io/badge/Problem_ID-CL--03-9dff00?style=for-the-badge&labelColor=0b0b0f)
-![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing_(100%25)-00c853?style=for-the-badge&labelColor=0b0b0f)
-![Deployment](https://img.shields.io/badge/Vercel-Deployed-0070f3?style=for-the-badge&logo=vercel&logoColor=white&labelColor=0b0b0f)
+![OpenHack'26](https://img.shields.io/badge/OpenHack'26-Climate%20%26%20Disaster%20Resilience-bd00ff?style=for-the-badge&labelColor=0b0b0f)
+![Problem ID](https://img.shields.io/badge/Problem-CL--03-9dff00?style=for-the-badge&labelColor=0b0b0f)
+![Test Status](https://img.shields.io/badge/Tests-34%2F34%20Passing-00c853?style=for-the-badge&labelColor=0b0b0f)
+![Deployment](https://img.shields.io/badge/Frontend-Vercel%20Deployed-0070f3?style=for-the-badge&logo=vercel&logoColor=white&labelColor=0b0b0f)
 
-<h3>Full-Stack Disaster Relief Coordination, Inventory Tracking & Optimization System</h3>
-<p>Engineered for high-stress humanitarian logistics during acute emergency scenarios (e.g., Sindh Floods).</p>
+### Smart Relief. Faster Decisions. Better Coordination.
 
-[🌐 Live Frontend (Vercel)](https://responso-disaster-relief-optimizer.vercel.app) · [💻 Local Frontend (Port 3000)](http://localhost:3000) · [⚙️ API Swagger Docs](http://127.0.0.1:8000/docs) · [🩺 Health Check](http://127.0.0.1:8000/health)
+**A full-stack disaster relief coordination and resource optimization system built to help humanitarian teams manage emergency requests, track supplies, and coordinate deliveries during natural disasters.**
+
+Designed around disaster scenarios such as floods in Sindh, Pakistan, Responso connects field assistance requests with available relief resources through transparent, constraint-aware allocation.
+
+**🌐 Online Mode | 📡 Offline Mode | 🧠 Smart Allocation | 🚚 Delivery Tracking**
+
+[🌐 Live Application](https://responso-disaster-relief-optimizer.vercel.app) · [📘 API Documentation](http://127.0.0.1:8000/docs) · [🩺 Backend Health Check](http://127.0.0.1:8000/health)
+
+**Developed by Team INNOHIVE**  
+Abdul Ahad · Devraj · Azhar
 
 </div>
 
 ---
 
-## 🧭 Table of Contents
+## 📑 Table of Contents
 
-- [1. Executive Overview](#1-executive-overview)
-- [2. System Architecture & Tech Stack](#2-system-architecture--tech-stack)
-- [3. Localhost & Deployment URLs](#3-localhost--deployment-urls)
-- [4. Resource Allocation Algorithm](#4-resource-allocation-algorithm)
-- [5. Offline-First Resilience & Sync Engine](#5-offline-first-resilience--sync-engine)
-- [6. Directory Structure](#6-directory-structure)
-- [7. Quickstart & Installation](#7-quickstart--installation)
-- [8. Vercel Deployment Configuration](#8-vercel-deployment-configuration)
-- [9. Demo Accounts & Credentials](#9-demo-accounts--credentials)
-- [10. Automated Testing Suite](#10-automated-testing-suite)
-- [11. Implemented REST APIs](#11-implemented-rest-apis)
-- [12. OpenHack'26 Challenge Alignment (CL-03)](#12-openhack26-challenge-alignment-cl-03)
-- [13. Security, Governance & Audit](#13-security-governance--audit)
-
----
-
-## 1. Executive Overview
-
-**Responso** is an integrated disaster relief coordination platform designed to resolve the critical bottleneck of inefficient relief distribution during natural disasters. By linking field assistance requests directly to regional depot stockpiles, Responso runs a deterministic, transparent, and explainable **Resource Allocation Engine** that balances urgency, affected population, logistics distance (via Haversine calculations), and depot delivery capacity.
-
-### Key Capabilities
-- **Assistance Request Registry**: Live tracking of field demands categorized by urgency (`critical`, `high`, `moderate`, `low`), affected population, GPS coordinates, and required emergency items (Clean Water, MRE Food Packs, First Aid Kits, Shelter Tents, Hygiene Packs).
-- **Depot & Stockpile Management**: Real-time multi-depot inventory visibility (Sukkur Hub, Hyderabad Forward Depot, Karachi Central) with transaction-locked stock movements.
-- **Explainable Optimization Engine**: Deterministic greedy heuristic scoring algorithm prioritizing life-safety, minimizing transit distance, and respecting convoy capacity with zero "black-box" magic.
-- **Allocation Run Lifecycle**: Draft recommendation preview $\rightarrow$ human-in-the-loop coordinator approval $\rightarrow$ transactional stock decrement $\rightarrow$ automated convoy dispatch creation.
-- **Active Convoy Tracking**: State-machine delivery lifecycle (`dispatched` $\rightarrow$ `in_transit` $\rightarrow$ `delivered` $\rightarrow$ `failed` with automatic stock restoration).
-- **Offline-First Resilience**: Full field operability when telecommunications collapse; persistent FIFO operation queue with unique UUID idempotency keys.
-- **Audit & Governance**: Complete, immutable event logging capturing actors, operational timestamps, and changes.
+- [1. Overview](#-1-overview)
+- [2. Online and Offline Modes](#-2-online-and-offline-modes)
+- [3. Key Features](#-3-key-features)
+- [4. System Architecture](#-4-system-architecture)
+- [5. Technology Stack](#-5-technology-stack)
+- [6. Resource Allocation Algorithm](#-6-resource-allocation-algorithm)
+- [7. Offline Synchronization Engine](#-7-offline-synchronization-engine)
+- [8. Application URLs](#-8-application-urls)
+- [9. Project Structure](#-9-project-structure)
+- [10. Installation and Setup](#-10-installation-and-setup)
+- [11. Deployment](#-11-deployment)
+- [12. Demo Accounts](#-12-demo-accounts)
+- [13. Automated Testing](#-13-automated-testing)
+- [14. REST API Endpoints](#-14-rest-api-endpoints)
+- [15. OpenHack'26 Challenge Alignment](#-15-openhack26-challenge-alignment)
+- [16. Security and Data Integrity](#-16-security-and-data-integrity)
+- [17. Team INNOHIVE](#-17-team-innohive)
 
 ---
 
-## 2. System Architecture & Tech Stack
+## 🌍 1. Overview
 
-### Architecture Pattern
-Responso adheres to a clean, modular multi-tier full-stack architecture:
+**Responso** is a disaster relief resource optimization platform designed to improve the coordination of emergency supplies during floods and other natural disasters.
 
+During emergencies, relief organizations must manage incoming assistance requests, monitor available supplies, identify urgent needs, and coordinate deliveries across multiple locations. Poor coordination can delay essential supplies from reaching affected communities.
+
+Responso addresses these challenges through a centralized platform that combines inventory management, geographical distance calculations, priority scoring, allocation recommendations, and delivery tracking.
+
+### 🎯 Our Mission
+
+To help humanitarian teams make **faster, more transparent, and better-informed resource allocation decisions**, even when internet connectivity is unreliable or unavailable.
+
+### 💡 How Responso Works
+
+1. **Register requests:** Record affected locations, urgency levels, population estimates, and required relief items.
+2. **Monitor resources:** Track available supplies across multiple relief depots.
+3. **Optimize allocation:** Calculate priority scores and evaluate suitable depots based on distance, stock, and delivery capacity.
+4. **Review recommendations:** Allow authorized coordinators to approve or reject proposed allocations.
+5. **Coordinate deliveries:** Track relief convoys from dispatch to final delivery.
+6. **Synchronize operations:** Preserve supported field actions offline and synchronize queued changes when connectivity returns.
+
+---
+
+## 🔥 2. Online and Offline Modes
+
+One of Responso's key capabilities is its support for **both ONLINE and OFFLINE operating modes**. Disaster-affected areas may experience network congestion, power outages, or complete communication failures. The application is designed to remain useful in these conditions.
+
+### 🟢 ONLINE MODE — Connected Operations
+
+When an internet connection and the backend service are available, Responso can communicate with its REST API for connected operations.
+
+- Authenticate users and apply role-based permissions.
+- Retrieve assistance requests and inventory data from the backend.
+- Register and manage relief requests.
+- Generate resource allocation recommendations.
+- Approve allocations and manage stock movements.
+- Track delivery status and review audit records.
+- Synchronize queued offline operations with the server.
+
+**Best for:** Relief coordination centers, warehouses, logistics teams, and connected field operations.
+
+### 🟠 OFFLINE MODE — Continue Field Operations
+
+When connectivity is unavailable, Responso uses its Progressive Web App (PWA) capabilities and local storage to support configured offline workflows.
+
+- Load the cached application shell.
+- Access data already available in local storage.
+- Record supported operations locally.
+- Queue eligible changes for later synchronization.
+- Preserve queued operations using unique idempotency keys.
+- Retry synchronization when connectivity returns.
+- Review pending synchronization status.
+
+**Best for:** Flood-affected areas, remote communities, field teams, and locations with unstable internet connectivity.
+
+### 🔄 Automatic Synchronization
+
+When connectivity returns, the synchronization engine can replay eligible queued operations in first-in, first-out (FIFO) order. Idempotency keys help prevent the same operation from being applied more than once.
+
+```text
+       ONLINE MODE
+            |
+     Internet Available?
+        /          \
+      YES           NO
+       |             |
+   Server API    OFFLINE MODE
+       |             |
+   Process Data  Save Supported
+       |         Changes Locally
+       |             |
+       |        Queue Operations
+       |             |
+       +------ Internet Restored
+                     |
+               Sync Pending Queue
+                     |
+               Updated Server Data
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                 Frontend UI (Vite + React 19)               │
-│      Google AI Studio Design System • Tailwind CSS v4       │
-│      Lucide Icons • Leaflet Mapping • Interactive Dashboards│
-└──────────────────────────────┬──────────────────────────────┘
-                               │ HTTP / JSON (via Vite Proxy)
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 FastAPI REST Backend (Python 3.13)          │
-│   Pydantic v2 Schemas • JWT Authentication • RBAC Security  │
-│   Standardized JSON Error Payloads {"error": {...}}        │
-└──────────────┬──────────────────────────────┬───────────────┘
-               │                              │
-               ▼                              ▼
-┌──────────────────────────────┐ ┌─────────────────────────────┐
-│  Optimization Engine         │ │ SQLAlchemy 2.0 ORM          │
-│  - Haversine Distance Calc   │ │ SQLite / WAL Mode           │
-│  - Factor-based Prioritization│ │ Full Transactional Locks    │
-│  - Nearest Depot Matching    │ │ Relational Integrity & PK/FK│
-└──────────────────────────────┘ └─────────────────────────────┘
+
+> **Important:** Offline functionality depends on previously cached application assets, locally available data, and the specific actions implemented for offline use. Server-dependent features may require reconnection. Synchronization should not be interpreted as guaranteed conflict-free merging of every change.
+
+---
+
+## ✨ 3. Key Features
+
+| Feature | Description |
+|---|---|
+| 🚨 Emergency Request Management | Register and prioritize relief requests based on urgency and affected population. |
+| 📦 Multi-Depot Inventory | Track essential supplies across multiple relief warehouses. |
+| 🧠 Resource Optimization | Generate explainable allocation recommendations using priority scores and geographical distance. |
+| 🗺️ Location-Based Logistics | Use GPS coordinates and Haversine distance calculations to evaluate nearby depots. |
+| 🚚 Delivery & Convoy Tracking | Track deliveries through dispatch, transit, delivery, and failure states. |
+| 🔄 Online/Offline Operation | Support connected workflows and configured offline field operations. |
+| 🔁 Offline Synchronization | Queue eligible local changes and retry synchronization after reconnection. |
+| 🔐 Role-Based Access Control | Restrict sensitive operations according to user roles. |
+| 📋 Audit Logging | Record operational events for accountability and review. |
+| 🧪 Automated Testing | Validate allocation logic, authentication, persistence, and other implemented workflows. |
+
+### Essential Relief Resources
+
+The system manages five categories of emergency supplies:
+
+- 💧 Clean Water
+- 🍱 Emergency Food Packs
+- 🩹 First Aid Kits
+- ⛺ Shelter Tents
+- 🧼 Hygiene Packs
+
+---
+
+## 🏗️ 4. System Architecture
+
+Responso follows a modular, multi-tier architecture that separates the frontend, API layer, allocation logic, and database operations.
+
+```text
+┌──────────────────────────────────────────────┐
+│            React Frontend / PWA              │
+│                                              │
+│  Dashboard • Requests • Inventory • Maps     │
+│  Deliveries • Audit • Local Storage          │
+└──────────────────────┬───────────────────────┘
+                       │
+             HTTP / JSON REST API
+                       │
+┌──────────────────────▼───────────────────────┐
+│              FastAPI Backend                 │
+│                                              │
+│  Authentication • Validation • API Routes    │
+│  Role-Based Access Control • Audit Events    │
+└─────────────┬─────────────────┬──────────────┘
+              │                 │
+┌─────────────▼────────┐ ┌──────▼──────────────┐
+│ Resource Allocation  │ │ Database Layer      │
+│                      │ │                     │
+│ Priority Scoring     │ │ SQLAlchemy ORM      │
+│ Distance Calculation │ │ SQLite / WAL        │
+│ Stock & Fleet Limits │ │ Relational Models   │
+└──────────────────────┘ └─────────────────────┘
+
+        Offline-First Support
+     ┌──────────────────────────┐
+     │ PWA Cache • Local Storage │
+     │ Operation Queue • Sync    │
+     └──────────────────────────┘
 ```
 
-### Technology Matrix
-| Layer | Technologies & Libraries |
-| :--- | :--- |
-| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Leaflet Maps, Service Worker PWA |
-| **Backend API** | Python 3.13, FastAPI, Uvicorn, Pydantic v2 |
-| **Database & ORM** | SQLite 3 with Write-Ahead Logging (WAL), SQLAlchemy 2.0 ORM (12 relational models) |
-| **Authentication & Security** | JWT (HS256 via `pyjwt`), Native `bcrypt` password hashing (cost factor 12), Role-Based Access Control (RBAC) |
-| **Testing** | Pytest (29 tests), Node Native Test Runner & TSX (5 tests) — 100% pass rate |
-| **Deployment** | Vercel (Frontend SPA with `vercel.json` rewrites and `.npmrc` peer-deps), Uvicorn/Docker (Backend) |
+### Architecture Highlights
+
+- Modular API routes for individual system functions.
+- A dedicated allocation engine for relief distribution recommendations.
+- Transaction-aware inventory operations.
+- Local persistence and an offline synchronization queue.
+- A separate frontend and backend that communicate through REST APIs.
 
 ---
 
-## 3. Localhost & Deployment URLs
+## 🛠️ 5. Technology Stack
 
-When running locally or inspecting deployment:
-
-| Service | Target URL | Description |
-| :--- | :--- | :--- |
-| **Live Frontend (Vercel)** | [https://responso-disaster-relief-optimizer.vercel.app](https://responso-disaster-relief-optimizer.vercel.app) | Production SPA deployment |
-| **Local Frontend** | [http://localhost:3000](http://localhost:3000) | Local React 19 + Vite development server |
-| **Local Backend API** | [http://127.0.0.1:8000](http://127.0.0.1:8000) | FastAPI async REST API server |
-| **Swagger Interactive Docs**| [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Interactive OpenAPI schema explorer & test client |
-| **Health Check Endpoint** | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) | Backend connectivity heartbeat |
+| Layer | Technologies |
+|---|---|
+| Frontend | React 19, TypeScript, Vite |
+| UI & Styling | Tailwind CSS v4, Lucide React |
+| Mapping | Leaflet |
+| Offline Support | Progressive Web App, Service Worker, Local Storage |
+| Backend | Python, FastAPI, Uvicorn |
+| Validation | Pydantic v2 |
+| Database | SQLite 3, Write-Ahead Logging |
+| ORM | SQLAlchemy 2.0 |
+| Authentication | JWT, bcrypt |
+| Authorization | Role-Based Access Control |
+| Testing | Pytest, Node.js Test Runner, TSX |
+| Frontend Deployment | Vercel |
 
 ---
 
-## 4. Resource Allocation Algorithm
+## 🧠 6. Resource Allocation Algorithm
 
-The Responso Allocation Engine (`backend/app/allocation/engine.py`) implements an explainable, deterministic baseline algorithm designed for humanitarian disaster response:
+The allocation engine, implemented in `backend/app/allocation/engine.py`, generates explainable recommendations for distributing available relief resources.
 
-### 1. Priority Scoring Formula
-For each unallocated assistance request $i$:
-$$\text{Score}_i = w_{\text{urgency}} \cdot U_i + w_{\text{pop}} \cdot P_i + w_{\text{wait}} \cdot W_i$$
+### 6.1 Priority Scoring
+
+Each unallocated assistance request receives a priority score:
+
+\[
+S_i = 0.50U_i + 0.35P_i + 0.15W_i
+\]
 
 Where:
-- **Urgency Factor ($U_i$)**: `critical` = 1.0, `high` = 0.75, `moderate` = 0.50, `low` = 0.25 (Default Weight = $0.50$).
-- **Population Factor ($P_i$)**: $\min\left(1.0, \frac{\text{affected\_population}}{10000}\right)$ (Default Weight = $0.35$).
-- **Wait Time Factor ($W_i$)**: Hours waiting capped at 72 hours normalized to $[0, 1]$ (Default Weight = $0.15$).
 
-### 2. Distance Calculation (Haversine Formula)
-Geographical distance between depot $(\phi_w, \lambda_w)$ and incident site $(\phi_r, \lambda_r)$ is calculated via great-circle distance:
-$$d = 2R \cdot \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_w)\cos(\phi_r)\sin^2\left(\frac{\Delta\lambda}{2}\right)}\right)$$
-with Earth radius $R = 6,371\text{ km}$.
+- **Urgency (\(U_i\)):** Critical = 1.00, High = 0.75, Moderate = 0.50, Low = 0.25.
+- **Population (\(P_i\)):** A normalized score based on the affected population, capped at 1.00.
+- **Waiting Time (\(W_i\)):** Waiting hours normalized over a maximum of 72 hours.
 
-### 3. Allocation Constraints & Logic
-1. Requests are sorted in descending order of Priority Score.
-2. Available warehouses are queried and sorted in ascending order of distance $d$.
-3. Warehouses provide items from existing stock up to remaining unallocated demand, respecting:
-   - **Weight Capacity (`capacity_kg`)**: Based on unit weights (Water: 10kg, Food: 24kg, Medical: 4.5kg, Shelter: 18kg, Hygiene: 3.5kg).
-   - **Delivery Fleet Quota (`available_delivery_trucks`)**: Ensures a depot does not commit beyond available transport vehicles.
-4. **Draft vs Confirmed**: Running the optimizer creates an uncommitted `draft` allocation run with transparent decision reasons. Inventory is **only** reserved and deducted when an authorized relief coordinator explicitly **approves** the run.
+The default weights emphasize urgency while also considering the number of affected people and how long they have been waiting.
+
+### 6.2 Geographical Distance
+
+Responso uses the Haversine formula to estimate the great-circle distance between a relief depot and an affected location.
+
+\[
+\begin{aligned}
+a={}&\sin^2\left(\frac{\Delta\phi}{2}\right)\\
+&+\cos(\phi_1)\cos(\phi_2)
+\sin^2\left(\frac{\Delta\lambda}{2}\right)
+\end{aligned}
+\]
+
+\[
+d=2R\arcsin(\sqrt{a})
+\]
+
+Where \(R=6{,}371\) km is the approximate radius of Earth.
+
+### 6.3 Allocation Constraints
+
+The allocation engine considers:
+
+1. Request priority scores.
+2. Distance to available relief depots.
+3. Available stock for each required item.
+4. Depot weight capacity.
+5. Available delivery vehicles.
+6. Remaining demand after allocations.
+
+### 6.4 Human Approval
+
+The system separates recommendation generation from allocation approval.
+
+```text
+Assistance Requests
+        ↓
+Priority & Distance Evaluation
+        ↓
+Draft Allocation Run
+        ↓
+Coordinator Review
+        ↓
+Approve or Reject
+        ↓
+Inventory & Delivery Updates
+```
+
+Inventory changes are made through the configured approval workflow rather than simply because an optimization run has been generated.
 
 ---
 
-## 5. Offline-First Resilience & Sync Engine
+## 📡 7. Offline Synchronization Engine
 
-To ensure uninterrupted humanitarian operations in disaster zones with degraded or severed telecommunications:
+The offline synchronization system is designed to maintain supported field operations when a connection to the backend is unavailable.
 
-1. **PWA & App Shell Caching (`public/sw.js`, `public/manifest.json`)**:
-   - Service worker caches the core HTML, stylesheets, scripts, icons, and Leaflet map assets.
-   - Navigation fallback: Serves cached app shell during offline blackouts.
-2. **Persistent Local Data Persistence (`src/services/storage.ts`)**:
-   - Schema versioning (`v3`) with migration compatibility for legacy stores.
-   - Built-in `QuotaExceededError` protection gracefully prunes historical audit logs while protecting active request and convoy records.
-3. **Persistent Operation Queue (`src/services/offlineSync.ts`)**:
-   - Mutations executed offline (`CREATE_REQUEST`, `UPDATE_DELIVERY_STATUS`, `RECORD_STOCK_MOVEMENT`) are immediately applied to local state with `_syncStatus: 'pending'` and enqueued into `responso_offline_sync_queue_v1`.
-   - Every operation is signed with a unique `idempotencyKey` (UUIDv4) to prevent duplicate backend execution upon network replay.
-4. **Automatic & Foreground Synchronization**:
-   - Heartbeat connectivity monitor pings `/health` and listens to `online` / `offline` events.
-   - When connection is restored or the user clicks **Sync Now**, the FIFO queue drains automatically, updating client temporary IDs with official server reference codes (`REQ-0001`).
+### Main Components
+
+**Service Worker — `public/sw.js`**
+
+Caches configured application resources and provides an application-shell fallback when offline.
+
+**Local Storage — `src/services/storage.ts`**
+
+Maintains locally stored application data and handles configured storage migrations and quota protection.
+
+**Synchronization Queue — `src/services/offlineSync.ts`**
+
+Queues eligible operations, including supported request creation, delivery status updates, and stock movement records.
+
+**API Client — `src/services/api.ts`**
+
+Connects frontend services to the backend and supports the application's configured offline fallback behavior.
+
+### Synchronization Flow
+
+1. A supported operation is initiated while offline.
+2. The operation is recorded in local application state.
+3. A pending operation is added to the synchronization queue.
+4. The operation receives a unique UUID-based idempotency key.
+5. Connectivity monitoring detects when synchronization can resume.
+6. The queue retries eligible operations in FIFO order.
+7. The frontend updates the synchronization status using the response.
+
+The synchronization queue is intended to reduce duplicate submissions and help preserve field updates during connectivity interruptions. Final consistency still depends on server validation and conflict-handling behavior.
 
 ---
 
-## 6. Directory Structure
+## 🔗 8. Application URLs
+
+| Service | URL | Purpose |
+|---|---|---|
+| Live Frontend | [Open Responso](https://responso-disaster-relief-optimizer.vercel.app) | Deployed frontend |
+| Local Frontend | `http://localhost:3000` | Local development interface |
+| Local Backend | `http://127.0.0.1:8000` | FastAPI backend |
+| Swagger API Docs | `http://127.0.0.1:8000/docs` | Interactive API documentation |
+| Health Check | `http://127.0.0.1:8000/health` | Backend health endpoint |
+
+**Note:** The local URLs work only when the corresponding services are running on your computer. The deployed frontend does not automatically make a locally running backend accessible to external users.
+
+---
+
+## 📁 9. Project Structure
 
 ```text
 Responso/
-├── .gitignore                          # Root ignore for node_modules, *.db, .env, venv
-├── .npmrc                              # legacy-peer-deps=true for npm install reliability
-├── README.md                           # Master documentation
+├── README.md
+├── .gitignore
+├── .npmrc
+│
 ├── backend/
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── routes/
-│   │   │   │   ├── allocation.py       # Draft run calculation & atomic approval
-│   │   │   │   ├── audit.py            # Audit log inspection
-│   │   │   │   ├── auth.py             # User login & JWT token issuance
-│   │   │   │   ├── dashboard.py        # Summary metrics & demo reset
-│   │   │   │   ├── deliveries.py       # Convoy tracking & status transitions
-│   │   │   │   ├── inventory.py        # Stock movement & stock levels
-│   │   │   │   ├── locations.py        # Geographic coordinate registry
-│   │   │   │   ├── requests.py         # Assistance requests CRUD
-│   │   │   │   ├── users.py            # User management
-│   │   │   │   └── warehouses.py       # Depot master data
-│   │   │   └── deps.py                 # DB session & auth dependencies
+│   │   │   │   ├── allocation.py
+│   │   │   │   ├── audit.py
+│   │   │   │   ├── auth.py
+│   │   │   │   ├── dashboard.py
+│   │   │   │   ├── deliveries.py
+│   │   │   │   ├── inventory.py
+│   │   │   │   ├── locations.py
+│   │   │   │   ├── requests.py
+│   │   │   │   ├── users.py
+│   │   │   │   └── warehouses.py
+│   │   │   └── deps.py
 │   │   ├── allocation/
-│   │   │   └── engine.py               # Deterministic allocation algorithm
+│   │   │   └── engine.py
 │   │   ├── core/
-│   │   │   ├── config.py               # Environment configuration
-│   │   │   ├── database.py             # SQLAlchemy engine & session factory
-│   │   │   └── security.py             # bcrypt hashing & JWT verification
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   └── security.py
 │   │   ├── models/
-│   │   │   └── models.py               # 12 relational ORM models
 │   │   ├── schemas/
-│   │   │   └── schemas.py              # Pydantic v2 request/response schemas
 │   │   ├── seeds/
-│   │   │   └── seed_data.py            # Sindh Flood disaster scenario seeder
-│   │   └── main.py                     # FastAPI application entrypoint
+│   │   └── main.py
 │   ├── tests/
-│   │   ├── conftest.py                 # Test fixtures & isolated SQLite database
-│   │   ├── test_allocation_engine.py   # 7 unit tests for algorithm & math
-│   │   ├── test_api_allocation_flow.py # 6 integration tests for transactions
-│   │   ├── test_api_auth_and_requests.py # 9 auth, RBAC & validation tests
-│   │   ├── test_enhanced_features.py   # 6 multi-depot, rollback & idempotency tests
-│   │   └── test_persistence.py         # 1 persistent restart verification test
-│   ├── .env.example
 │   ├── requirements.txt
-│   └── responso.db                     # Persistent SQLite database
-├── responso-_-disaster-relief-resource-optimizer/ # React 19 Frontend
-│   ├── .npmrc                          # Frontend legacy-peer-deps config
-│   ├── vercel.json                     # Production SPA rewrites
+│   └── .env.example
+│
+├── responso-_-disaster-relief-resource-optimizer/
+│   ├── public/
 │   ├── src/
-│   │   ├── components/                 # LeafletMap, DoodleIcons, SyncQueueModal
-│   │   ├── data/mockData.ts            # Seeded Sindh Flood community datasets
+│   │   ├── components/
+│   │   ├── data/
 │   │   ├── services/
-│   │   │   ├── api.ts                  # REST API client with offline fallback
-│   │   │   ├── offlineSync.ts          # FIFO sync queue & idempotency engine
-│   │   │   ├── optimizer.ts            # Client-side heuristic optimizer mirror
-│   │   │   └── storage.ts              # LocalStorage v3 with quota pruning
-│   │   ├── views/                      # Dashboard, Requests, Inventory, Allocations, Deliveries, Audit
-│   │   ├── App.tsx                     # Main application layout & router
-│   │   └── types.ts                    # TypeScript data contracts
+│   │   │   ├── api.ts
+│   │   │   ├── offlineSync.ts
+│   │   │   ├── optimizer.ts
+│   │   │   └── storage.ts
+│   │   ├── views/
+│   │   ├── App.tsx
+│   │   └── types.ts
 │   ├── package.json
-│   └── vite.config.ts                  # Configured with /api proxy to backend
-└── ReliefRoute_System_Documentation/   # Reference specifications & hackathon guides
+│   ├── vite.config.ts
+│   └── vercel.json
+│
+└── ReliefRoute_System_Documentation/
 ```
+
+*This is a representative structure. Ensure directory and file names match the current repository.*
 
 ---
 
-## 7. Quickstart & Installation
+## 🚀 10. Installation and Setup
 
 ### Prerequisites
-- **Python 3.10+** (tested on Python 3.13)
-- **Node.js 18+** & `npm`
 
-### Step 1: Backend Setup
+- Python 3.10 or later, with Python 3.13 used in the described environment.
+- Node.js 18 or later.
+- npm.
+- Git (recommended).
+
+### Step 1 — Clone the Repository
+
 ```bash
-# Navigate to backend directory
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd Responso
+```
+
+Replace the placeholder with your actual GitHub repository URL.
+
+### Step 2 — Configure the Backend
+
+```bash
 cd backend
-
-# Create and activate virtual environment (optional)
 python -m venv venv
-.\venv\Scripts\activate       # On Windows
-source venv/bin/activate      # On Linux/macOS
+```
 
-# Install dependencies
+Activate the virtual environment.
+
+**Windows PowerShell:**
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+**Linux/macOS:**
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
-# Seed the persistent database with the Sindh Flood scenario
+Configure environment variables using `.env.example` as a reference. Set a secure application secret and the appropriate database settings before running the application.
+
+If the project requires initial seed data, run:
+
+```bash
 python -m app.seeds.seed_data
+```
 
-# Run the FastAPI server
+Start the backend:
+
+```bash
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
-The FastAPI backend will be live at `http://127.0.0.1:8000` (API Docs: `/docs`).
 
-### Step 2: Frontend Setup
-In a second terminal:
+Backend API: `http://127.0.0.1:8000`
+
+Interactive documentation: `http://127.0.0.1:8000/docs`
+
+### Step 3 — Configure the Frontend
+
+Open a second terminal from the project root:
+
 ```bash
 cd responso-_-disaster-relief-resource-optimizer
-
-# Install dependencies
 npm install
-
-# Start Vite dev server
 npm run dev
 ```
-The UI will be accessible at `http://localhost:3000` with the `FastAPI Live` badge.
+
+Open the local address printed by Vite. If the Vite configuration specifies port 3000, use:
+
+`http://localhost:3000`
+
+### Step 4 — Verify the Application
+
+- Confirm the backend health endpoint responds.
+- Open the frontend and test login.
+- Check the requests and inventory views.
+- Generate a draft allocation run.
+- Test the supported offline workflows with network connectivity disabled.
+- Re-enable connectivity and verify the synchronization queue.
 
 ---
 
-## 8. Vercel Deployment Configuration
+## ☁️ 11. Deployment
 
-When deploying the frontend to [Vercel](https://vercel.com):
+The frontend is configured for deployment on [Vercel](https://vercel.com).
 
-1. **Root Directory**: Set to `responso-_-disaster-relief-resource-optimizer` (do not leave as `./`).
-2. **Framework Preset**: `Vite`.
-3. **Build Command**: `vite build` (or `npm run build`).
-4. **Output Directory**: `dist`.
-5. **Install Command**: `npm install` (automated with `.npmrc` for clean dependency resolution).
-6. **SPA Routing**: Handled automatically via `responso-_-disaster-relief-resource-optimizer/vercel.json`.
+### Frontend Deployment Checklist
 
----
+1. Import the repository into Vercel.
+2. Set the root directory to `responso-_-disaster-relief-resource-optimizer`.
+3. Select the Vite framework preset.
+4. Use `npm run build` as the build command.
+5. Use `dist` as the output directory.
+6. Configure environment variables required by the frontend.
+7. Configure the frontend API base URL to point to a reachable, deployed backend.
+8. Verify that SPA routing and production API requests work.
 
-## 9. Demo Accounts & Credentials
+### Backend Deployment Considerations
 
-The database is seeded with authentic role-based accounts for testing:
+The backend requires a reachable hosting environment, suitable persistent database storage, secure environment variables, and appropriate CORS configuration.
 
-| Role | Email | Password | Permissions |
-| :--- | :--- | :--- | :--- |
-| **Logistics Coordinator** | `tariq.mansoor@responso.pk` | `Password123!` | Run optimizer, approve/reject allocations, manage requests, assign convoys |
-| **Operations Coordinator**| `operations@responso.pk` | `Password123!` | Alternate logistics coordinator account for automated tests & operations |
-| **Field Dispatcher** | `zainab.baloch@responso.pk` | `Password123!` | Transition delivery states (dispatched, in transit, delivered, failed) |
-| **Inventory Manager** | `imran.qureshi@responso.pk` | `Password123!` | Adjust depot stockpiles, log inbound restock and outbound distributions |
-| **System Admin** | `farhan.ali@responso.pk` | `Password123!` | Full governance, role elevation/demotion, account activation/suspension, audit inspection |
+**Important:** A frontend deployment on Vercel does not, by itself, deploy the FastAPI backend. Localhost API URLs are accessible only from the machine running the backend, so they must not be used as public production API addresses.
 
 ---
 
-## 10. Automated Testing Suite
+## 🔐 12. Demo Accounts
 
-Responso includes **34 automated unit and integration tests** with a **100% pass rate**:
+The development environment is described as containing seeded accounts for different operational roles.
 
-### Backend Pytest Suite (29 Tests)
+| Role | Intended Permissions |
+|---|---|
+| Logistics Coordinator | Review allocations, manage requests, coordinate deliveries |
+| Operations Coordinator | Coordinate operational workflows |
+| Field Dispatcher | Update delivery and convoy status |
+| Inventory Manager | Manage stock records and movements |
+| System Administrator | Manage users, permissions, and audit records |
+
+For security, demo credentials should be documented only in a controlled development environment. Do not publish real passwords, production credentials, signing secrets, or private configuration values in a public repository.
+
+---
+
+## 🧪 13. Automated Testing
+
+The project documentation reports **34 automated tests, with all 34 passing**.
+
+| Test Suite | Reported Tests | Main Coverage |
+|---|---:|---|
+| Allocation Engine | 7 | Priority scoring, distance calculations, allocation logic |
+| API Allocation Flow | 6 | Drafts, inventory operations, approval workflow |
+| Authentication & Requests | 9 | Authentication, authorization, validation |
+| Enhanced Features | 6 | Multi-depot allocation, idempotency, failure recovery |
+| Persistence | 1 | Data persistence across restarts |
+| Frontend Tests | 5 | Session handling, offline queue, retry logic |
+
+### Run Backend Tests
+
+From the repository root:
+
 ```bash
 python -m pytest backend/tests/ -v
 ```
-**Results**: `29 passed in 10.23s`
-- **`test_allocation_engine.py` (7 tests)**: Haversine distance accuracy, population normalization caps, priority score weighting, stock non-exhaustion, multiple competing requests, unmet demand calculation.
-- **`test_api_allocation_flow.py` (6 tests)**: Stock movement validation, draft generation, stale run invalidation, atomic approval with row-level locks, delivery state transitions.
-- **`test_api_auth_and_requests.py` (9 tests)**: `/health`, login JWT token generation, invalid credentials rejection, 401 on bad tokens, 403 on role mismatch, request validation.
-- **`test_enhanced_features.py` (6 tests)**:
-  - Multi-warehouse allocation line grouping and per-warehouse deliveries.
-  - Safe reservation release and request demand restoration upon delivery failure (`FAILED`).
-  - Delivery status idempotent retries preventing double deductions.
-  - Role-Based Access Control (RBAC) enforcement across all endpoints.
-  - Database-enforced idempotency deduplication with `Idempotency-Key` headers.
-  - Concurrency-safe monotonic reference generation (`REQ-XXXX`).
-- **`test_persistence.py` (1 test)**: Confirms data survival across full process and database restarts.
 
-### Frontend Test Suite (5 Tests)
+### Run Frontend Tests
+
 ```bash
 cd responso-_-disaster-relief-resource-optimizer
 npm test
 ```
-**Results**: `5 passed in 0.25s`
-- User entity mapping, session token storage/cleanup, offline sync queue enqueueing, single/bulk retry error recovery, depot weight and fleet truck constraint enforcement.
+
+Run these commands against the current codebase to confirm the reported test count and results.
 
 ---
 
-## 11. Implemented REST APIs
+## 🔌 14. REST API Endpoints
 
-All API endpoints follow RESTful conventions, produce structured JSON, support idempotency headers (`Idempotency-Key`), and return standardized error envelopes (`{"error": {"code": "...", "message": "...", "details": ...}}`):
+The backend exposes REST endpoints for authentication, request management, inventory, allocation, deliveries, users, and audit events.
 
-| Method | Endpoint | Description | Role Required |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/health` | Health check & system status | Public |
-| `POST` | `/api/v1/auth/login` | Real credentials authentication & JWT issuance | Public |
-| `GET` | `/api/v1/auth/me` | Fetch authenticated user profile | Authenticated |
-| `POST` | `/api/v1/auth/logout` | Invalidate/clear active session token | Authenticated |
-| `GET` | `/api/v1/dashboard/summary` | Aggregate dashboard statistics & KPIs | Authenticated |
-| `POST` | `/api/v1/dashboard/reset-demo` | Reset database to fresh Sindh Flood seed | Admin / Coordinator |
-| `GET` | `/api/v1/requests/` | List assistance requests with status filtering | Authenticated |
-| `POST` | `/api/v1/requests/` | Register new field assistance request (Idempotent) | Authenticated |
-| `GET` | `/api/v1/requests/{id}` | Retrieve request details & required items | Authenticated |
-| `PATCH` | `/api/v1/requests/{id}` | Update status or priority | Coordinator / Admin |
-| `GET` | `/api/v1/warehouses/` | List storage depots & active capacities | Authenticated |
-| `GET` | `/api/v1/warehouses/{id}/inventory` | List item stock for specific depot | Authenticated |
-| `GET` | `/api/v1/inventory/` | List item stock across all depots | Authenticated |
-| `POST` | `/api/v1/inventory/movements` | Record incoming supplies or manual adjustments (Idempotent) | Inventory / Admin |
-| `GET` | `/api/v1/allocation-runs/` | List historical allocation runs | Authenticated |
-| `POST` | `/api/v1/allocation-runs/` | Generate deterministic draft allocation run | Coordinator / Admin |
-| `GET` | `/api/v1/allocation-runs/{id}` | Inspect recommendation lines & decision reasoning | Authenticated |
-| `POST` | `/api/v1/allocation-runs/{id}/approve` | Confirm allocation, create per-warehouse deliveries, reserve stock | Coordinator / Admin |
-| `POST` | `/api/v1/allocation-runs/{id}/reject` | Reject draft allocation recommendation | Coordinator / Admin |
-| `GET` | `/api/v1/deliveries/` | List active relief convoys with depot & request metadata | Authenticated |
-| `POST` | `/api/v1/deliveries/{id}/assign` | Assign convoy vehicle and driver | Coordinator / Admin |
-| `PATCH` | `/api/v1/deliveries/{id}/status` | Update convoy status (`DISPATCHED`, `IN_TRANSIT`, `DELIVERED`, `FAILED`) | Coordinator / Dispatcher / Admin |
-| `GET` | `/api/v1/users/` | List users | Admin |
-| `PATCH` | `/api/v1/users/{id}` | Update user (Self-update safe fields; Admin only for role/active) | Self / Admin |
-| `GET` | `/api/v1/audit/events` | Inspect immutable audit event log | Admin |
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/health` | Health check |
+| `POST` | `/api/v1/auth/login` | Authenticate and issue a token |
+| `GET` | `/api/v1/auth/me` | Retrieve the current user |
+| `POST` | `/api/v1/auth/logout` | Handle logout |
+| `GET` | `/api/v1/dashboard/summary` | Retrieve dashboard metrics |
+| `POST` | `/api/v1/dashboard/reset-demo` | Reset seeded demo data |
+| `GET` | `/api/v1/requests/` | List assistance requests |
+| `POST` | `/api/v1/requests/` | Create an assistance request |
+| `GET` | `/api/v1/requests/{id}` | Retrieve request details |
+| `PATCH` | `/api/v1/requests/{id}` | Update a request |
+| `GET` | `/api/v1/warehouses/` | List depots |
+| `GET` | `/api/v1/warehouses/{id}/inventory` | Retrieve depot inventory |
+| `GET` | `/api/v1/inventory/` | Retrieve inventory across depots |
+| `POST` | `/api/v1/inventory/movements` | Record stock movements |
+| `GET` | `/api/v1/allocation-runs/` | List allocation runs |
+| `POST` | `/api/v1/allocation-runs/` | Generate a draft allocation |
+| `GET` | `/api/v1/allocation-runs/{id}` | Inspect allocation details |
+| `POST` | `/api/v1/allocation-runs/{id}/approve` | Approve an allocation |
+| `POST` | `/api/v1/allocation-runs/{id}/reject` | Reject an allocation |
+| `GET` | `/api/v1/deliveries/` | List deliveries |
+| `POST` | `/api/v1/deliveries/{id}/assign` | Assign a vehicle and driver |
+| `PATCH` | `/api/v1/deliveries/{id}/status` | Update delivery status |
+| `GET` | `/api/v1/users/` | List users |
+| `PATCH` | `/api/v1/users/{id}` | Update permitted user fields |
+| `GET` | `/api/v1/audit/events` | Inspect audit events |
 
----
-
-## 12. OpenHack'26 Challenge Alignment (CL-03)
-
-Responso was built for **OpenHack'26** (Department of Software Engineering, MUET SZAB Campus, Khairpur) under **Category 4: Climate & Disaster Resilience — Problem Statement CL-03 (Disaster Relief Resource Optimizer)**:
-
-| Hackathon Requirement | How Responso Solves It |
-| :--- | :--- |
-| **Real-time Demand vs Supply** | Live multi-item registry (Water, Food, Medical, Shelter, Hygiene) mapped directly to regional warehouse stockpiles. |
-| **Priority Scoring** | Mathematical composite score weighting Urgency (50%), Population (35%), and Waiting Hours (15%). |
-| **Spatial Logistics** | Haversine distance calculations linking demand sites to closest viable depot. |
-| **Resource Constraints** | Respects depot kilogram weight thresholds and truck fleet availability. |
-| **Human-in-the-Loop** | Optimization runs produce transparent drafts requiring coordinator approval before stock decrement. |
-| **Convoy Tracking** | End-to-end convoy state machine with automated rollback of reservations if delivery fails. |
-| **Offline Resilience** | Full PWA offline mode with UUID idempotency queue for severed telecom scenarios. |
-| **Auditability** | Immutable audit log capturing all actors, actions, and system transitions. |
+Actual endpoint availability and authorization requirements should be confirmed against the running backend's OpenAPI documentation.
 
 ---
 
-## 13. Security, Governance & Audit
+## 🏆 15. OpenHack'26 Challenge Alignment
 
-- **Authentication**: JWT tokens signed with HMAC-SHA256 containing expiration timestamps and user IDs.
-- **Password Protection**: Passwords securely hashed with salted native `bcrypt` (work factor 12); no plaintext passwords stored.
-- **Role-Based Access Control**: Declarative FastAPI dependency `require_role(...)` guards sensitive endpoints against unauthorized privilege escalation.
-- **Database Safety**: Parameterized queries via SQLAlchemy ORM protect against SQL injection. Foreign key constraints and database-level checks ensure referential integrity.
-- **Race Condition Prevention**: Allocation approvals employ atomic database transactions (`session.commit()` with row locking) to prevent double-spending inventory.
-- **CORS & Environment Isolation**: Configured CORS middleware with allowed origins; all environment secrets managed via `.env`.
+**Challenge:** CL-03 — Disaster Relief Resource Optimizer  
+**Category:** Climate & Disaster Resilience  
+**Event:** OpenHack'26, Department of Software Engineering, MUET SZAB Campus, Khairpur
+
+Responso addresses the challenge through the following capabilities:
+
+| Challenge Need | Responso Approach |
+|---|---|
+| Demand and Supply Coordination | Connect assistance requests with depot inventory. |
+| Emergency Prioritization | Calculate request scores using urgency, affected population, and waiting time. |
+| Geographical Logistics | Estimate depot-to-request distances using the Haversine formula. |
+| Resource Constraints | Consider available supplies, weight capacity, and delivery fleet availability. |
+| Controlled Allocation | Require coordinator approval before committing allocation changes. |
+| Delivery Visibility | Track convoy progress through defined delivery states. |
+| Connectivity Resilience | Support configured offline workflows and queued synchronization. |
+| Accountability | Maintain operational audit records and role-based access controls. |
+
+### Expected Impact
+
+Responso aims to help relief teams:
+
+- Identify urgent assistance needs more systematically.
+- Improve visibility into available supplies.
+- Reduce avoidable delays in resource allocation.
+- Coordinate relief deliveries across multiple depots.
+- Maintain supported field workflows during network interruptions.
+- Improve transparency in operational decision-making.
+
+---
+
+## 🛡️ 16. Security and Data Integrity
+
+Responso incorporates security and integrity controls intended for a role-based operational system.
+
+- **Authentication:** JWT-based authentication.
+- **Password Protection:** bcrypt password hashing.
+- **Authorization:** Role-based permissions for protected operations.
+- **Data Validation:** Pydantic schemas for request and response validation.
+- **Database Integrity:** SQLAlchemy ORM and relational constraints.
+- **Transactional Operations:** Database transactions for configured allocation workflows.
+- **Idempotency:** Unique operation keys for supported retry-safe operations.
+- **Auditability:** Records of operational events and changes.
+- **Environment Configuration:** Secrets and environment-specific settings managed outside source code.
+
+Security depends on correct deployment configuration, protected credentials, appropriate token handling, and verification of the actual implementation.
+
+---
+
+## 👥 17. Team INNOHIVE
+
+**Team INNOHIVE** developed Responso for the OpenHack'26 disaster resilience challenge.
+
+| Team Member | Name |
+|---|---|
+| Member 1 | **Abdul Ahad** |
+| Member 2 | **Devraj** |
+| Member 3 | **Azhar** |
+
+### Our Approach
+
+As Team INNOHIVE, we focused on a practical disaster relief coordination problem: helping humanitarian teams organize requests, manage relief inventory, and make resource allocation decisions when time and connectivity are critical.
+
+By combining a full-stack web application, explainable allocation logic, and offline-first capabilities, Responso demonstrates an approach to making disaster response operations more organized and resilient.
+
+---
+
+<div align="center">
+
+### 🚨 Responso — Relief Coordination Without Connectivity as a Single Point of Failure
+
+**Built with purpose by Team INNOHIVE**
+
+🌐 Online Operations · 📡 Offline Resilience · 🧠 Smart Allocation · 🚚 Coordinated Relief
+
+[Launch Responso](https://responso-disaster-relief-optimizer.vercel.app)
+
+</div>
